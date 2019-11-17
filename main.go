@@ -130,7 +130,7 @@ func main() {
 		log.Println("Setting up SDK...")
 	}
 
-	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(config.ApiKey, config.ClientName, &config.Host, persister, &CustomLogger{})
+	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(config.ApiKey, config.ClientName, &config.Host, persister, &CustomLogger{}, false)
 	if err != nil {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
