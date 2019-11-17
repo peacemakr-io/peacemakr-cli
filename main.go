@@ -110,6 +110,13 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	}
 }
 
+func registerOrFail(sdk peacemakr_go_sdk.PeacemakrSDK) {
+	err := sdk.Register()
+	if err != nil {
+		log.Fatalf(" failed to register due to %v", err)
+	}
+}
+
 type CustomLogger struct{}
 func (l *CustomLogger) Printf(format string, args ...interface{}) {
 	log.Printf(format, args...)
@@ -138,15 +145,10 @@ func main() {
 	actionStr := strings.ToLower(*action)
 
 	if actionStr == "encrypt" {
-
-		for err = sdk.Register(); err != nil; {
-			log.Println("Encrypting client, failed to register, trying again...")
-			time.Sleep(time.Duration(1) * time.Second)
-		}
-
+		registerOrFail(sdk)
 		encryptOrFail(sdk, os.Stdin, os.Stdout)
-
 	} else if actionStr == "decrypt" {
+		registerOrFail(sdk)
 		decryptOrFail(sdk, os.Stdin, os.Stdout)
 	} else {
 		log.Fatalf("Unknown action specified %s", *action)
