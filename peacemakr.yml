@@ -1,6 +1,6 @@
 
 Verbose: true
-Host: "http://localhost:8080"
+Host: "api.peacemakr.io"
 ApiKey: "some-key"
-PersisterFileLocation: "./"
+PersisterFileLocation: "/tmp"
 ClientName: "test"

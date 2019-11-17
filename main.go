@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 )
 
 type PeacemakrConfig struct {
@@ -109,6 +110,10 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	}
 }
 
+type CustomLogger struct{}
+func (l *CustomLogger) Printf(format string, args ...interface{}) {
+	log.Printf(format, args...)
+}
 func main() {
 	config := LoadConfigs("peacemakr")
 
@@ -118,11 +123,10 @@ func main() {
 		log.Println("Setting up SDK...")
 	}
 
-	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(config.ApiKey, config.ClientName, &config.Host, persister, nil, false)
+	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(config.ApiKey, config.ClientName, &config.Host, persister, &CustomLogger{})
 	if err != nil {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
-	log.Println("finished getting sdk", sdk)
 
 	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
 	flag.Parse()
@@ -130,12 +134,18 @@ func main() {
 	if action == nil {
 		log.Fatalf("Failed to provide an action")
 	}
-	log.Println("finished parsing", *action)
 
 	actionStr := strings.ToLower(*action)
 
 	if actionStr == "encrypt" {
+
+		for err = sdk.Register(); err != nil; {
+			log.Println("Encrypting client, failed to register, trying again...")
+			time.Sleep(time.Duration(1) * time.Second)
+		}
+
 		encryptOrFail(sdk, os.Stdin, os.Stdout)
+
 	} else if actionStr == "decrypt" {
 		decryptOrFail(sdk, os.Stdin, os.Stdout)
 	} else {
