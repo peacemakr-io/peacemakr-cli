@@ -10,11 +10,15 @@ WORKDIR /go/src/github.com/peacemakr/
 
 RUN go install /go/src/github.com/peacemakr/peacemakr-cli/
 
-FROM alpine
+WORKDIR /go/bin
+ADD peacemakr.yml ./
+# FROM alpine
 
-RUN apk update && apk upgrade && apk add --no-cache ca-certificates && update-ca-certificates
+# RUN apk update && apk upgrade && apk add --no-cache ca-certificates && update-ca-certificates
 
-WORKDIR /go/bin/
-COPY --from=builder /go/bin/peacemakr-cli /go/bin/peacemakr-cli
+# COPY --from=builder /go/src/github.com/peacemakr/peacemakr-cli/vendor/ /go/src/
+
+# WORKDIR /go/bin/
+# COPY --from=builder /go/bin/peacemakr-cli /go/bin/peacemakr-cli
 
 CMD ./peacemakr-cli
