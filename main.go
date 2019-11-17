@@ -42,9 +42,10 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	if err != nil {
 		log.Fatalf("unable to read config, %v", err)
 	}
-	log.Printf("Successfully read in config")
 
-	log.Println("Config: ", configuration)
+	if configuration.Verbose {
+		log.Println("Config: ", configuration)
+	}
 
 	return &configuration
 }
@@ -116,6 +117,20 @@ func registerOrFail(sdk peacemakr_go_sdk.PeacemakrSDK) {
 	}
 }
 
+func canonicalAction(action *string) string {
+	if action == nil {
+		log.Fatalf("failed to provide an action")
+	}
+
+	actionStr := strings.ToLower(*action)
+
+	if actionStr != "encrypt" && actionStr != "decrypt" {
+		log.Fatalf("unkonwn action: ", *action)
+	}
+
+	return actionStr
+}
+
 type CustomLogger struct{}
 func (l *CustomLogger) Printf(format string, args ...interface{}) {
 	log.Printf(format, args...)
@@ -137,19 +152,16 @@ func main() {
 	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
 	flag.Parse()
 
-	if action == nil {
-		log.Fatalf("Failed to provide an action")
+	actionStr := canonicalAction(action)
+
+	if config.Verbose {
+		log.Printf("registering client")
+		registerOrFail(sdk)
 	}
 
-	actionStr := strings.ToLower(*action)
-
 	if actionStr == "encrypt" {
-		registerOrFail(sdk)
 		encryptOrFail(sdk, os.Stdin, os.Stdout)
 	} else if actionStr == "decrypt" {
-		registerOrFail(sdk)
 		decryptOrFail(sdk, os.Stdin, os.Stdout)
-	} else {
-		log.Fatalf("Unknown action specified %s", *action)
 	}
 }
