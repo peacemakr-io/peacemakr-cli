@@ -1,0 +1,15 @@
+FROM golang:1.12-alpine as builder
+RUN apk update && apk upgrade && apk add --no-cache git curl gcc musl-dev libbsd-dev ca-certificates && update-ca-certificates
+
+ENV GOPATH=/go
+
+ADD go.mod go.sum /go/src/github.com/peacemakr/peacemakr-cli/
+ADD main.go /go/src/github.com/peacemakr/peacemakr-cli/
+
+
+# issue with vendor was that it didn't copy over /lib and /include folder in crypto... soooo for quick hack, i just moved them over
+# but this should be fixed
+# also should we use 0.0.8? or latest release
+RUN cd src/github.com/peacemakr/peacemakr-cli/ && GO111MODULE=on go mod vendor 
+RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.8/pkg/crypto/include /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
+RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.8/pkg/crypto/lib /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/

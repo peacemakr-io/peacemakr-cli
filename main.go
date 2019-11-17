@@ -1,5 +1,5 @@
 
-package peacemakr_cli
+package main
 
 import (
 	"flag"
@@ -62,7 +62,7 @@ func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 		log.Fatalf("in-place encryption is not supproted (from and to are the same)")
 	}
 
-	data, err := ioutil.ReadAll(os.Stdin)
+	data, err := ioutil.ReadAll(from)
 	if err != nil {
 		log.Fatalf("failed to read stdin due to error %v", err)
 	}
@@ -92,7 +92,7 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 		log.Fatalf("in-place decryption is not supproted (from and to are the same)")
 	}
 
-	data, err := ioutil.ReadAll(os.Stdin)
+	data, err := ioutil.ReadAll(from)
 	if err != nil {
 		log.Fatalf("failed to read stdin due to error %v", err)
 	}
@@ -110,7 +110,7 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 }
 
 func main() {
-	config := LoadConfigs("~/.peacemakr")
+	config := LoadConfigs("peacemakr")
 
 	persister := utils.GetDiskPersister(config.PersisterFileLocation)
 
@@ -122,6 +122,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
+	log.Println("finished getting sdk", sdk)
 
 	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
 	flag.Parse()
@@ -129,6 +130,7 @@ func main() {
 	if action == nil {
 		log.Fatalf("Failed to provide an action")
 	}
+	log.Println("finished parsing", *action)
 
 	actionStr := strings.ToLower(*action)
 

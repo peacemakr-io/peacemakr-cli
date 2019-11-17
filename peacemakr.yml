@@ -1,0 +1,6 @@
+
+Verbose: true
+Host: "http://localhost:8080"
+ApiKey: "some-key"
+PersisterFileLocation: "./"
+ClientName: "test"
