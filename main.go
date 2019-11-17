@@ -10,7 +10,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 type PeacemakrConfig struct {
@@ -43,9 +42,10 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	if err != nil {
 		log.Fatalf("unable to read config, %v", err)
 	}
-	log.Printf("Successfully read in config")
 
-	log.Println("Config: ", configuration)
+	if configuration.Verbose {
+		log.Println("Config: ", configuration)
+	}
 
 	return &configuration
 }
@@ -110,6 +110,27 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	}
 }
 
+func registerOrFail(sdk peacemakr_go_sdk.PeacemakrSDK) {
+	err := sdk.Register()
+	if err != nil {
+		log.Fatalf(" failed to register due to %v", err)
+	}
+}
+
+func canonicalAction(action *string) string {
+	if action == nil {
+		log.Fatalf("failed to provide an action")
+	}
+
+	actionStr := strings.ToLower(*action)
+
+	if actionStr != "encrypt" && actionStr != "decrypt" {
+		log.Fatalf("unkonwn action: ", *action)
+	}
+
+	return actionStr
+}
+
 type CustomLogger struct{}
 func (l *CustomLogger) Printf(format string, args ...interface{}) {
 	log.Printf(format, args...)
@@ -128,6 +149,7 @@ func main() {
 		utils.GetDiskPersister("/tmp/"),
 		log.New(os.Stdout, "MyProjectCrypto", log.LstdFlags))
 
+
 	if err != nil {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
@@ -138,11 +160,12 @@ func main() {
 		log.Println("Finish parsing flag")
 	}
 
-	if action == nil {
-		log.Fatalf("Failed to provide an action")
-	}
+	actionStr := canonicalAction(action)
 
-	actionStr := strings.ToLower(*action)
+	if config.Verbose {
+		log.Printf("registering client")
+		registerOrFail(sdk)
+	}
 
 	if actionStr == "encrypt" {
 		if config.Verbose {
@@ -156,11 +179,16 @@ func main() {
 		if config.Verbose {
 			log.Println("Encrypting")
 		}
-		encryptOrFail(sdk, os.Stdin, os.Stdout)
 
+		encryptOrFail(sdk, os.Stdin, os.Stdout)
 	} else if actionStr == "decrypt" {
+		if config.Verbose {
+			log.Println("In decrypting")
+		}
+		for err = sdk.Register(); err != nil; {
+			log.Println("Decrypting client, failed to register, trying again...")
+			time.Sleep(time.Duration(1) * time.Second)
+		}
 		decryptOrFail(sdk, os.Stdin, os.Stdout)
-	} else {
-		log.Fatalf("Unknown action specified %s", *action)
 	}
 }
