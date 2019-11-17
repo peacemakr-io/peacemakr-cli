@@ -1,6 +1,6 @@
 
 Verbose: true
-Host: "api.peacemakr.io"
-ApiKey: "some-key"
+Host: "https://api.peacemakr.io"
+ApiKey: ""
 PersisterFileLocation: "/tmp"
 ClientName: "test"

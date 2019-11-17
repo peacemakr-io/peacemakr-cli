@@ -117,19 +117,26 @@ func (l *CustomLogger) Printf(format string, args ...interface{}) {
 func main() {
 	config := LoadConfigs("peacemakr")
 
-	persister := utils.GetDiskPersister(config.PersisterFileLocation)
-
 	if config.Verbose {
 		log.Println("Setting up SDK...")
 	}
 
-	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(config.ApiKey, config.ClientName, &config.Host, persister, &CustomLogger{})
+	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(
+		config.ApiKey,
+		config.ClientName,
+		&config.Host,
+		utils.GetDiskPersister("/tmp/"),
+		log.New(os.Stdout, "MyProjectCrypto", log.LstdFlags))
+
 	if err != nil {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
 
 	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
 	flag.Parse()
+	if config.Verbose {
+		log.Println("Finish parsing flag")
+	}
 
 	if action == nil {
 		log.Fatalf("Failed to provide an action")
@@ -138,12 +145,17 @@ func main() {
 	actionStr := strings.ToLower(*action)
 
 	if actionStr == "encrypt" {
-
+		if config.Verbose {
+			log.Println("In encrypting")
+		}
 		for err = sdk.Register(); err != nil; {
 			log.Println("Encrypting client, failed to register, trying again...")
 			time.Sleep(time.Duration(1) * time.Second)
 		}
 
+		if config.Verbose {
+			log.Println("Encrypting")
+		}
 		encryptOrFail(sdk, os.Stdin, os.Stdout)
 
 	} else if actionStr == "decrypt" {
