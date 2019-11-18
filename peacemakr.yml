@@ -1,6 +1,5 @@
 
 Verbose: true
 Host: https://api.peacemakr.io
-ApiKey: 
 PersisterFileLocation: /tmp/.peacemakr
 ClientName: peacemakr-cli
