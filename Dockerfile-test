@@ -1,6 +1,6 @@
 FROM peacemakr-cli
 
-# this is a test api key
+# This is a test api key.
 ENV PEACEMAKR_APIKEY=x5hkgphujnRJY+wyIuFbOoo5t9sdBCRDwcxWyVJR5fw=
 
 RUN echo "hello world" | ./peacemakr-cli > test.p
