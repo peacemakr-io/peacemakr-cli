@@ -27,10 +27,10 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	viper.SetConfigType("yml")
 
 	// Also permit environment overrides.
-	viper.SetEnvPrefix("PEACEMAKR_")
+	viper.SetEnvPrefix("PEACEMAKR")
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
+	viper.BindEnv("ApiKey")
 	viper.AutomaticEnv() // Bind to all configs, overriding config from env when in both file and env var.
 
 	var configuration PeacemakrConfig
@@ -47,6 +47,7 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	if configuration.Verbose {
 		log.Println("Config: ", configuration)
 	}
+	log.Println("apikey", viper.Get("ApiKey"))
 
 	return &configuration
 }
