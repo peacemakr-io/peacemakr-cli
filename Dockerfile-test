@@ -6,3 +6,9 @@ ENV PEACEMAKR_APIKEY=x5hkgphujnRJY+wyIuFbOoo5t9sdBCRDwcxWyVJR5fw=
 RUN echo "hello world" | ./peacemakr-cli > test.p
 RUN cat test.p | ./peacemakr-cli -action=decrypt > test.decrypted.p
 RUN cat test.decrypted.p | grep "hello world"
+
+RUN echo "hello world" > input.txt
+RUN ./peacemakr-cli -inputFileName=input.txt -outputFileName=output.txt
+RUN ./peacemakr-cli -action=decrypt -inputFileName=output.txt -outputFileName=hello.txt
+
+RUN cat hello.txt | grep "hello world"

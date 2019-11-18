@@ -47,7 +47,6 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	if configuration.Verbose {
 		log.Println("Config: ", configuration)
 	}
-	log.Println("apikey", viper.Get("ApiKey"))
 
 	return &configuration
 }
@@ -157,12 +156,35 @@ func main() {
 	}
 
 	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
+	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
+	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
 	flag.Parse()
 	if config.Verbose {
 		log.Println("Finish parsing flag")
 	}
 
 	actionStr := canonicalAction(action)
+	
+	var inputFile *os.File
+	var outputFile *os.File
+
+	if *inputFileName == "" {
+		inputFile = os.Stdin 
+	} else {
+		inputFile, err = os.Open(*inputFileName)
+		if err != nil {
+			log.Fatalf("Error opening the file %v", err)
+		}
+	}
+
+	if *outputFileName == "" {
+		outputFile = os.Stdout
+	} else {
+		outputFile, err = os.OpenFile(*outputFileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
+		if err != nil {
+			log.Fatalf("Error opening the file %v", err)
+		}
+	}
 
 	if config.Verbose {
 		log.Printf("registering client")
@@ -182,7 +204,7 @@ func main() {
 			log.Println("Encrypting")
 		}
 
-		encryptOrFail(sdk, os.Stdin, os.Stdout)
+		encryptOrFail(sdk, inputFile, outputFile)
 	} else if actionStr == "decrypt" {
 		if config.Verbose {
 			log.Println("In decrypting")
@@ -191,6 +213,6 @@ func main() {
 			log.Println("Decrypting client, failed to register, trying again...")
 			time.Sleep(time.Duration(1) * time.Second)
 		}
-		decryptOrFail(sdk, os.Stdin, os.Stdout)
+		decryptOrFail(sdk, inputFile, outputFile)
 	}
 }
