@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v1
       -
         name: Set up Go
-        run: actions/setup-go@v1
+        uses: actions/setup-go@v1
       -
-         name: Download sdk
-         run: go get github.com/peacemakr-io/peacemakr-go-sdk
+        name: Download sdk
+        run: go get github.com/peacemakr-io/peacemakr-go-sdk
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v1
