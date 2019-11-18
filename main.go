@@ -132,6 +132,36 @@ func canonicalAction(action *string) string {
 	return actionStr
 }
 
+func loadInputFile(inputFileName string) (*os.File, error) {
+	var inputFile *os.File
+	var err error
+	if inputFileName == "" {
+		inputFile = os.Stdin 
+	} else {
+		inputFile, err = os.Open(inputFileName)
+		if err != nil {
+			log.Printf("Error opening the file %v", err)
+			return nil, err
+		}
+	}
+	return inputFile, nil
+}
+
+func loadOutputFile(outputFileName string) (*os.File, error) {
+	var outputFile *os.File
+	var err error
+	if outputFileName == "" {
+		outputFile = os.Stdout
+	} else {
+		outputFile, err = os.OpenFile(outputFileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
+		if err != nil {
+			log.Printf("Error opening the file %v", err)
+			return nil, err
+		}
+	}
+	return outputFile, nil
+}
+
 type CustomLogger struct{}
 func (l *CustomLogger) Printf(format string, args ...interface{}) {
 	log.Printf(format, args...)
@@ -165,25 +195,13 @@ func main() {
 
 	actionStr := canonicalAction(action)
 	
-	var inputFile *os.File
-	var outputFile *os.File
-
-	if *inputFileName == "" {
-		inputFile = os.Stdin 
-	} else {
-		inputFile, err = os.Open(*inputFileName)
-		if err != nil {
-			log.Fatalf("Error opening the file %v", err)
-		}
+	inputFile, err := loadInputFile(*inputFileName)
+	if err != nil {
+		log.Fatalf("Error loading input file", err)
 	}
-
-	if *outputFileName == "" {
-		outputFile = os.Stdout
-	} else {
-		outputFile, err = os.OpenFile(*outputFileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
-		if err != nil {
-			log.Fatalf("Error opening the file %v", err)
-		}
+	outputFile, err := loadOutputFile(*outputFileName)
+	if err != nil {
+		log.Fatalf("Error loading output file", err)
 	}
 
 	if config.Verbose {
