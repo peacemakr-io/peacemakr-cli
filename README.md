@@ -35,3 +35,8 @@ Make it easy with an alias:
 $ docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr-cli ./peacemakr-cli -help
 ```
 
+## Note to build bin
+```sh
+go build -a -o peacemakr-cli-2 -ldflags '-w -extldflags "--verbose -static -L/path/to/peacemakr-go-sdk/crypto/lib -L/path/to/openssl-1.1.1a -lcrypto -ldl -lpthread"' .
+```
+
