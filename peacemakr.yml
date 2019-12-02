@@ -1,5 +1,5 @@
 
 Verbose: true
 Host: https://api.peacemakr.io
-PersisterFileLocation: /tmp/
+PersisterFileLocation: /tmp/.peacemakr
 ClientName: peacemakr-cli

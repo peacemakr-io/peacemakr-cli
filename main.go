@@ -46,7 +46,7 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 		}
 
 		if configuration.Verbose {
-			log.Println("Config: ", configuration)
+			log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n",  configuration.Verbose, configuration.Host, configuration.PersisterFileLocation,  configuration.ClientName)
 		}
 		return &configuration
 	}
@@ -57,7 +57,7 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	}
 
 	if configuration.Verbose {
-		log.Println("Config: ", configuration)
+		log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n",  configuration.Verbose, configuration.Host, configuration.PersisterFileLocation,  configuration.ClientName)
 	}
 
 	return &configuration
@@ -191,18 +191,22 @@ func main() {
 
 	if config.Verbose {
 		log.Println("Finish parsing flag and config")
-		log.Println("inputfilename: %s, OutputFilename %s", *inputFileName, *outputFileName)
+		log.Printf("inputfilename: %s, OutputFilename: %s", *inputFileName, *outputFileName)
 	}
 
 	if config.Verbose {
 		log.Println("Setting up SDK...")
 	}
 
+	if _, err := os.Stat(config.PersisterFileLocation); os.IsNotExist(err) {
+		os.MkdirAll(config.PersisterFileLocation, os.ModePerm)
+	}
+
 	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(
 		config.ApiKey,
 		config.ClientName,
 		&config.Host,
-		utils.GetDiskPersister("/tmp/"),
+		utils.GetDiskPersister(config.PersisterFileLocation),
 		log.New(os.Stdout, "MyProjectCrypto", log.LstdFlags))
 
 
