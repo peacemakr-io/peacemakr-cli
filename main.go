@@ -22,9 +22,9 @@ type PeacemakrConfig struct {
 }
 
 func LoadConfigs(configName string) *PeacemakrConfig {
-	viper.SetConfigName(configName)
-	viper.AddConfigPath(".")
-	viper.SetConfigType("yml")
+	var configuration PeacemakrConfig
+
+	viper.SetConfigFile(configName)
 
 	// Also permit environment overrides.
 	viper.SetEnvPrefix("PEACEMAKR")
@@ -33,10 +33,22 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	viper.BindEnv("ApiKey")
 	viper.AutomaticEnv() // Bind to all configs, overriding config from env when in both file and env var.
 
-	var configuration PeacemakrConfig
-
+    // If no config was found, we use default values
 	if err := viper.MergeInConfig(); err != nil {
-		log.Fatalf("Error reading config, %v", err)
+		log.Printf("Error reading config, %v", err)
+		log.Println("Using default values instead")
+		configuration = PeacemakrConfig{
+				Verbose: true,
+				Host: "https://api.peacemakr.io",
+				PersisterFileLocation: "/tmp/",
+				ClientName: "peacemakr-cli",
+				ApiKey: viper.GetString("ApiKey"),
+		}
+
+		if configuration.Verbose {
+			log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n",  configuration.Verbose, configuration.Host, configuration.PersisterFileLocation,  configuration.ClientName)
+		}
+		return &configuration
 	}
 
 	err := viper.Unmarshal(&configuration)
@@ -45,7 +57,7 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	}
 
 	if configuration.Verbose {
-		log.Println("Config: ", configuration)
+		log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n",  configuration.Verbose, configuration.Host, configuration.PersisterFileLocation,  configuration.ClientName)
 	}
 
 	return &configuration
@@ -153,7 +165,7 @@ func loadOutputFile(outputFileName string) (*os.File, error) {
 	if outputFileName == "" {
 		outputFile = os.Stdout
 	} else {
-		outputFile, err = os.OpenFile(outputFileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
+		outputFile, err = os.OpenFile(outputFileName, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 		if err != nil {
 			log.Printf("Error opening the file %v", err)
 			return nil, err
@@ -167,17 +179,34 @@ func (l *CustomLogger) Printf(format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
 func main() {
-	config := LoadConfigs("peacemakr")
+	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
+	customConfig := flag.String("config", "peacemakr.yml", "custom config file e.g. (peacemakr.yml)")
+	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
+	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
+	flag.Parse()
+	
+	actionStr := canonicalAction(action)
+
+	config := LoadConfigs(*customConfig)
+
+	if config.Verbose {
+		log.Println("Finish parsing flag and config")
+		log.Printf("inputfilename: %s, OutputFilename: %s", *inputFileName, *outputFileName)
+	}
 
 	if config.Verbose {
 		log.Println("Setting up SDK...")
+	}
+
+	if _, err := os.Stat(config.PersisterFileLocation); os.IsNotExist(err) {
+		os.MkdirAll(config.PersisterFileLocation, os.ModePerm)
 	}
 
 	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(
 		config.ApiKey,
 		config.ClientName,
 		&config.Host,
-		utils.GetDiskPersister("/tmp/"),
+		utils.GetDiskPersister(config.PersisterFileLocation),
 		log.New(os.Stdout, "MyProjectCrypto", log.LstdFlags))
 
 
@@ -185,15 +214,6 @@ func main() {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
 
-	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
-	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
-	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
-	flag.Parse()
-	if config.Verbose {
-		log.Println("Finish parsing flag")
-	}
-
-	actionStr := canonicalAction(action)
 	
 	inputFile, err := loadInputFile(*inputFileName)
 	if err != nil {
