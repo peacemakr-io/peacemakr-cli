@@ -32,9 +32,9 @@ Don't want to use docker? Checkout out our native binary releases for ubuntu.
 ./build-bin.sh
 ```
 
-## Get more help
+## What flags does it accept?
 ```sh
-$ docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -help
+$ docker run -i peacemakr/peacemakr-cli ./peacemakr-cli -help
 Usage of ./peacemakr-cli:
   -action string
     	action= encrypt|decrypt (default "encrypt")
@@ -45,4 +45,3 @@ Usage of ./peacemakr-cli:
   -outputFileName string
     	outputFile to encrypt/decrypt
 ```
-
