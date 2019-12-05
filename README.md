@@ -1,7 +1,7 @@
 # peacemakr-cli
 CLI that encrypts and decrypts anything using Peacemakr Crypto System.
 
-## Quick start
+## Quick start with Dockerhub
  (1) Register an account with https://peacemakr.io
  
  (2) Login to your admin portal, https://admin.peacemakr.io
@@ -26,16 +26,23 @@ Don't want to use docker? Checkout out our native binary releases for ubuntu.
 ### Examples in action:
  * [How to encrypt server logs with logrotate and peacemakr-cli](https://medium.com/@danielhuang37/encrypting-all-your-logs-in-2-easy-steps-using-logrotate-and-peacemakr-8ad9cbfe1b4c) 
 
-## Build with docker
+## Build from source with docker
 ```sh
-# build dependencies
-./build-dep.sh
-# build binaries 
+./build-dep.sh 
 ./build-bin.sh
 ```
 
-## Run with docker locally
+## Get more help
 ```sh
-$ docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr-cli ./peacemakr-cli -help
+$ docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -help
+Usage of ./peacemakr-cli:
+  -action string
+    	action= encrypt|decrypt (default "encrypt")
+  -config string
+    	custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")
+  -inputFileName string
+    	inputFile to encrypt/decrypt
+  -outputFileName string
+    	outputFile to encrypt/decrypt
 ```
 
