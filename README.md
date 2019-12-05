@@ -22,7 +22,7 @@ VK2LIDbz40rgi5fdY38C
 ```
 (5) Decrypt using `peacemakr-cli` + ApiKey,
 ```sh
-echo "$ciphertext" | docker run -e PEACEMAKR_APIKEY=x5hkgphujnRJY+wyIuFbOoo5t9sdBCRDwcxWyVJR5fw= -i peacemakr/peacemakr-cli ./peacemakr-cli -action=decrypt 2>/dev/null
+echo "$ciphertext" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -action=decrypt 2>/dev/null
 
 hello world
 ```
