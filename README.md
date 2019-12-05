@@ -53,3 +53,7 @@ Usage of ./peacemakr-cli:
   -outputFileName string
     	outputFile to encrypt/decrypt
 ```
+
+## FAQ
+
+ * `failed to register due to unknown error (status 500)` - verify correctness of your API key
