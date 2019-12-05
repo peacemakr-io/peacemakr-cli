@@ -8,9 +8,10 @@ CLI that encrypts and decrypts anything using Peacemakr Crypto System.
 
  (3) Grab your ApiKey
 
- (4) Invoke `peacemakr-cli` using your ApiKey, for example,
+ (4) Encrypt using `peacemakr-cli` + ApiKey,
 ```sh
-$ echo "hello world" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli
+$ ciphertext=`echo "hello world" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -action=encrypt`
+$ echo $ciphertext
 AQAAAAkAAAAoAAAALAAAADAAAABEAAAAWAAAANcAAADnAAAAMwEAAAAEAAIAAAAAEAAAACEI
 eELxb13s32PdZi/4NuUQAAAAUWJ17eT23DpJ63GdnJlq5XsAAAB7ImNyeXB0b0tleUlEIjoi
 MGtKdHR6TWt2MnNVa2Q4VndBOXNBckdVaWFZOHI2MHgyV3Y5T29EWGk5QT0iLCJzZW5kZXJL
@@ -19,6 +20,13 @@ AAAAswnudtyjo5K+UOKCSAAAADBGAiEA6b68OXaUWdvyfQrr6jENzjhwn7ewXp9tKNYEmu/W
 1rMCIQDJouUC0qlmDhUKpZr1k7gz3zDYuaZsMQs4RH2A2xhadvKfNCD/rk2UG2NVkLQSBHjF
 VK2LIDbz40rgi5fdY38C
 ```
+(5) Decrypt using `peacemakr-cli` + ApiKey,
+```sh
+echo "$ciphertext" | docker run -e PEACEMAKR_APIKEY=x5hkgphujnRJY+wyIuFbOoo5t9sdBCRDwcxWyVJR5fw= -i peacemakr/peacemakr-cli ./peacemakr-cli -action=decrypt 2>/dev/null
+
+hello world
+```
+
 
 Don't want to use docker? Checkout out our native binary releases for ubuntu.
  * https://github.com/peacemakr-io/peacemakr-cli/releases
