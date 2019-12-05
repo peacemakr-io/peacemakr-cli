@@ -1,14 +1,12 @@
 # peacemakr-cli
-CLI that encrypts and decrypts anything using Peacemakr Crypto System.
+CLI that encrypts and decrypts anything using Peacemakr Crypto System (includes builtin Key Lifecycle Management, Forward Cryptoagility, and On-Prem Key Derivation).
 
 ## Quick start with Dockerhub
  (1) Register an account with https://peacemakr.io
  
- (2) Login to your admin portal, https://admin.peacemakr.io
+ (2) Login to your admin portal, https://admin.peacemakr.io - grab your ApiKey
 
- (3) Grab your ApiKey
-
- (4) Encrypt using `peacemakr-cli` + ApiKey,
+ (3) Encrypt using `peacemakr-cli` + ApiKey,
 ```sh
 $ ciphertext=`echo "hello world" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -action=encrypt`
 $ echo $ciphertext
@@ -20,7 +18,7 @@ AAAAswnudtyjo5K+UOKCSAAAADBGAiEA6b68OXaUWdvyfQrr6jENzjhwn7ewXp9tKNYEmu/W
 1rMCIQDJouUC0qlmDhUKpZr1k7gz3zDYuaZsMQs4RH2A2xhadvKfNCD/rk2UG2NVkLQSBHjF
 VK2LIDbz40rgi5fdY38C
 ```
-(5) Decrypt using `peacemakr-cli` + ApiKey,
+(4) Decrypt using `peacemakr-cli` + ApiKey,
 ```sh
 echo "$ciphertext" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -action=decrypt 2>/dev/null
 
