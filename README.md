@@ -23,9 +23,8 @@ VK2LIDbz40rgi5fdY38C
 Don't want to use docker? Checkout out our native binary releases for ubuntu.
  * https://github.com/peacemakr-io/peacemakr-cli/releases
  
-## Example of how to use peacemakr-cli to encrypt server logs with logrotate
-
- * https://medium.com/@danielhuang37/encrypting-all-your-logs-in-2-easy-steps-using-logrotate-and-peacemakr-8ad9cbfe1b4c
+### Examples in action:
+ * [How to encrypt server logs with logrotate and peacemakr-cli](https://medium.com/@danielhuang37/encrypting-all-your-logs-in-2-easy-steps-using-logrotate-and-peacemakr-8ad9cbfe1b4c) 
 
 ## Build with docker
 ```sh
