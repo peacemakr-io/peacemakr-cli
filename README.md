@@ -1,5 +1,11 @@
+<p align="center">
+  <br>
+    <img src="https://github.com/peacemakr-io/peacemakr-admin-portal/blob/master/peacemakr-admin/public/images/PeacemakrP-Golden.png" width="150"/>
+  <br>
+</p>
+
 # peacemakr-cli
-CLI that encrypts and decrypts anything using Peacemakr Crypto System (includes builtin Key Lifecycle Management, Forward Cryptoagility, and On-Prem Key Derivation).
+CLI that may be used to interact with anything protected by Peacemakr's Secure Data Platform (includes builtin Key Lifecycle Management, Forward Cryptoagility, and On-Prem Key Derivation).
 
 ## Quick start with Dockerhub
  (1) Register an account with https://peacemakr.io
