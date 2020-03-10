@@ -4,8 +4,19 @@
   <br>
 </p>
 
-# peacemakr-cli
+# Peacemakr-cli
 CLI that may be used to interact with anything protected by Peacemakr's Secure Data Platform (includes builtin Key Lifecycle Management, Forward Cryptoagility, and On-Prem Key Derivation).
+
+## How to Install
+```sh
+brew tap peacemakr-io/peacemakr
+brew install peacemakr-cli
+
+# seeing it work
+export PEACEMAKR_APIKEY=your-api-key
+echo "hello world" | peacemakr-cli --action=encrypt | peacemakr-cli --action=decrypt
+# expected output: hello world
+```
 
 ## Quick start with Dockerhub
  (1) Register an account with https://peacemakr.io
