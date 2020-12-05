@@ -4,7 +4,6 @@ package main
 import (
 	"flag"
 	peacemakr_go_sdk "github.com/peacemakr-io/peacemakr-go-sdk/pkg"
-	"github.com/peacemakr-io/peacemakr-go-sdk/pkg/utils"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
@@ -38,9 +37,9 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 		log.Printf("Error reading config, %v", err)
 		log.Println("Using default values instead")
 		configuration = PeacemakrConfig{
-				Verbose: true,
+				Verbose: false,
 				Host: "https://api.peacemakr.io",
-				PersisterFileLocation: "/tmp/",
+				PersisterFileLocation: "/tmp/.peacemakr",
 				ClientName: "peacemakr-cli",
 				ApiKey: viper.GetString("ApiKey"),
 		}
@@ -206,7 +205,7 @@ func main() {
 		config.ApiKey,
 		config.ClientName,
 		&config.Host,
-		utils.GetDiskPersister(config.PersisterFileLocation),
+		GetDiskPersister(config.PersisterFileLocation),
 		log.New(os.Stdout, "MyProjectCrypto", log.LstdFlags))
 
 
