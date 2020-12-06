@@ -34,8 +34,6 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 
     // If no config was found, we use default values
 	if err := viper.MergeInConfig(); err != nil {
-		log.Printf("Error reading config, %v", err)
-		log.Println("Using default values instead")
 		configuration = PeacemakrConfig{
 				Verbose: false,
 				Host: "https://api.peacemakr.io",
@@ -183,7 +181,7 @@ func main() {
 	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
 	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
 	flag.Parse()
-	
+
 	actionStr := canonicalAction(action)
 
 	config := LoadConfigs(*customConfig)
@@ -213,7 +211,7 @@ func main() {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
 
-	
+
 	inputFile, err := loadInputFile(*inputFileName)
 	if err != nil {
 		log.Fatalf("Error loading input file", err)
