@@ -9,7 +9,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 type PeacemakrConfig struct {
@@ -199,12 +198,16 @@ func main() {
 		os.MkdirAll(config.PersisterFileLocation, os.ModePerm)
 	}
 
+	logger := log.New(os.Stderr, "Peacemakr CLI", log.LstdFlags)
+	if !config.Verbose {
+		logger.SetOutput(ioutil.Discard)
+	}
 	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(
 		config.ApiKey,
 		config.ClientName,
 		&config.Host,
 		GetDiskPersister(config.PersisterFileLocation),
-		log.New(os.Stdout, "MyProjectCrypto", log.LstdFlags))
+		logger)
 
 
 	if err != nil {
@@ -223,17 +226,11 @@ func main() {
 
 	if config.Verbose {
 		log.Printf("registering client")
-		registerOrFail(sdk)
 	}
 
+	registerOrFail(sdk)
+
 	if actionStr == "encrypt" {
-		if config.Verbose {
-			log.Println("In encrypting")
-		}
-		for err = sdk.Register(); err != nil; {
-			log.Println("Encrypting client, failed to register, trying again...")
-			time.Sleep(time.Duration(1) * time.Second)
-		}
 
 		if config.Verbose {
 			log.Println("Encrypting")
@@ -242,12 +239,9 @@ func main() {
 		encryptOrFail(sdk, inputFile, outputFile)
 	} else if actionStr == "decrypt" {
 		if config.Verbose {
-			log.Println("In decrypting")
+			log.Println("Decrypting")
 		}
-		for err = sdk.Register(); err != nil; {
-			log.Println("Decrypting client, failed to register, trying again...")
-			time.Sleep(time.Duration(1) * time.Second)
-		}
+
 		decryptOrFail(sdk, inputFile, outputFile)
 	}
 }
