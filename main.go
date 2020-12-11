@@ -4,13 +4,11 @@ package main
 import (
 	"flag"
 	peacemakr_go_sdk "github.com/peacemakr-io/peacemakr-go-sdk/pkg"
-	"github.com/peacemakr-io/peacemakr-go-sdk/pkg/utils"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 type PeacemakrConfig struct {
@@ -35,12 +33,10 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 
     // If no config was found, we use default values
 	if err := viper.MergeInConfig(); err != nil {
-		log.Printf("Error reading config, %v", err)
-		log.Println("Using default values instead")
 		configuration = PeacemakrConfig{
-				Verbose: true,
+				Verbose: false,
 				Host: "https://api.peacemakr.io",
-				PersisterFileLocation: "/tmp/",
+				PersisterFileLocation: "/tmp/.peacemakr",
 				ClientName: "peacemakr-cli",
 				ApiKey: viper.GetString("ApiKey"),
 		}
@@ -184,7 +180,7 @@ func main() {
 	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
 	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
 	flag.Parse()
-	
+
 	actionStr := canonicalAction(action)
 
 	config := LoadConfigs(*customConfig)
@@ -202,19 +198,23 @@ func main() {
 		os.MkdirAll(config.PersisterFileLocation, os.ModePerm)
 	}
 
+	logger := log.New(os.Stderr, "Peacemakr CLI", log.LstdFlags)
+	if !config.Verbose {
+		logger.SetOutput(ioutil.Discard)
+	}
 	sdk, err := peacemakr_go_sdk.GetPeacemakrSDK(
 		config.ApiKey,
 		config.ClientName,
 		&config.Host,
-		utils.GetDiskPersister(config.PersisterFileLocation),
-		log.New(os.Stdout, "MyProjectCrypto", log.LstdFlags))
+		GetDiskPersister(config.PersisterFileLocation),
+		logger)
 
 
 	if err != nil {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
 
-	
+
 	inputFile, err := loadInputFile(*inputFileName)
 	if err != nil {
 		log.Fatalf("Error loading input file", err)
@@ -226,17 +226,11 @@ func main() {
 
 	if config.Verbose {
 		log.Printf("registering client")
-		registerOrFail(sdk)
 	}
 
+	registerOrFail(sdk)
+
 	if actionStr == "encrypt" {
-		if config.Verbose {
-			log.Println("In encrypting")
-		}
-		for err = sdk.Register(); err != nil; {
-			log.Println("Encrypting client, failed to register, trying again...")
-			time.Sleep(time.Duration(1) * time.Second)
-		}
 
 		if config.Verbose {
 			log.Println("Encrypting")
@@ -245,12 +239,9 @@ func main() {
 		encryptOrFail(sdk, inputFile, outputFile)
 	} else if actionStr == "decrypt" {
 		if config.Verbose {
-			log.Println("In decrypting")
+			log.Println("Decrypting")
 		}
-		for err = sdk.Register(); err != nil; {
-			log.Println("Decrypting client, failed to register, trying again...")
-			time.Sleep(time.Duration(1) * time.Second)
-		}
+
 		decryptOrFail(sdk, inputFile, outputFile)
 	}
 }

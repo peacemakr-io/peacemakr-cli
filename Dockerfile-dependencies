@@ -10,6 +10,6 @@ ADD main.go /go/src/github.com/peacemakr/peacemakr-cli/
 # issue with vendor was that it didn't copy over /lib and /include folder in crypto... soooo for quick hack, i just moved them over
 # but this should be fixed
 # also should we use 0.0.10? or latest release
-RUN cd src/github.com/peacemakr/peacemakr-cli/ && GO111MODULE=on go mod vendor 
-RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.10/pkg/crypto/include /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
-RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.10/pkg/crypto/lib /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
+RUN cd src/github.com/peacemakr/peacemakr-cli/ && GO111MODULE=on go mod vendor
+RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.11-0.20201210100352-f5fcbaf18103/pkg/crypto/include /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
+RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.11-0.20201210100352-f5fcbaf18103/pkg/crypto/lib /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/

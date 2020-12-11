@@ -1,7 +1,7 @@
 FROM peacemakr-cli
 
 # This is a test api key.
-ENV PEACEMAKR_APIKEY=x5hkgphujnRJY+wyIuFbOoo5t9sdBCRDwcxWyVJR5fw=
+ENV PEACEMAKR_APIKEY=SQTCdQxcHqLciaWJ2nEQeAEnDb/i6LQjq0RZeqXwcGM=
 
 RUN echo "hello world" | ./peacemakr-cli > test.p
 RUN cat test.p | ./peacemakr-cli -action=decrypt > test.decrypted.p
