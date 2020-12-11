@@ -24,6 +24,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get install musl musl-dev
+          sudo ln -s /usr/lib/x86_64-linux-musl/libc.so /usr/lib/libc.musl-x86_64.so.1
+
       - name: Build project
         run: |
           go mod vendor
