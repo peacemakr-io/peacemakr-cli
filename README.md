@@ -59,14 +59,16 @@ Don't want to use docker? Checkout out our native binary releases for ubuntu.
 ```sh
 $ docker run -i peacemakr/peacemakr-cli ./peacemakr-cli -help
 Usage of ./peacemakr-cli:
-  -action string
-    	action= encrypt|decrypt (default "encrypt")
   -config string
-    	custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")
+        custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")
+  -decrypt
+        Should the application decrypt the ciphertext
+  -encrypt
+        Should the application encrypt the message
   -inputFileName string
-    	inputFile to encrypt/decrypt
+        inputFile to encrypt/decrypt
   -outputFileName string
-    	outputFile to encrypt/decrypt
+        outputFile to encrypt/decrypt
 ```
 
 ## FAQ
