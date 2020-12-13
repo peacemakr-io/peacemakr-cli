@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -14,7 +13,7 @@ import (
 type PeacemakrConfig struct {
 	Verbose               bool
 	Host                  string
-	ApiKey	              string
+	ApiKey                string
 	PersisterFileLocation string
 	ClientName            string
 }
@@ -31,18 +30,18 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	viper.BindEnv("ApiKey")
 	viper.AutomaticEnv() // Bind to all configs, overriding config from env when in both file and env var.
 
-    // If no config was found, we use default values
+	// If no config was found, we use default values
 	if err := viper.MergeInConfig(); err != nil {
 		configuration = PeacemakrConfig{
-				Verbose: false,
-				Host: "https://api.peacemakr.io",
-				PersisterFileLocation: "/tmp/.peacemakr",
-				ClientName: "peacemakr-cli",
-				ApiKey: viper.GetString("ApiKey"),
+			Verbose:               false,
+			Host:                  "https://api.peacemakr.io",
+			PersisterFileLocation: "/tmp/.peacemakr",
+			ClientName:            "peacemakr-cli",
+			ApiKey:                viper.GetString("ApiKey"),
 		}
 
 		if configuration.Verbose {
-			log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n",  configuration.Verbose, configuration.Host, configuration.PersisterFileLocation,  configuration.ClientName)
+			log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n", configuration.Verbose, configuration.Host, configuration.PersisterFileLocation, configuration.ClientName)
 		}
 		return &configuration
 	}
@@ -53,7 +52,7 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	}
 
 	if configuration.Verbose {
-		log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n",  configuration.Verbose, configuration.Host, configuration.PersisterFileLocation,  configuration.ClientName)
+		log.Printf("Config:\n Verbose: %v\n Host: %v\n Persister file location: %v\n Client Name: %v\n", configuration.Verbose, configuration.Host, configuration.PersisterFileLocation, configuration.ClientName)
 	}
 
 	return &configuration
@@ -76,7 +75,6 @@ func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	if err != nil {
 		log.Fatalf("failed to read stdin due to error %v", err)
 	}
-
 
 	encryptedData, err := sdk.Encrypt(data)
 	if err != nil {
@@ -106,7 +104,6 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	if err != nil {
 		log.Fatalf("failed to read stdin due to error %v", err)
 	}
-
 
 	decryptedData, err := sdk.Decrypt(data)
 	if err != nil {
@@ -144,7 +141,7 @@ func loadInputFile(inputFileName string) (*os.File, error) {
 	var inputFile *os.File
 	var err error
 	if inputFileName == "" {
-		inputFile = os.Stdin 
+		inputFile = os.Stdin
 	} else {
 		inputFile, err = os.Open(inputFileName)
 		if err != nil {
@@ -170,24 +167,31 @@ func loadOutputFile(outputFileName string) (*os.File, error) {
 	return outputFile, nil
 }
 
-type CustomLogger struct{}
-func (l *CustomLogger) Printf(format string, args ...interface{}) {
-	log.Printf(format, args...)
-}
 func main() {
-	action := flag.String("action", "encrypt", "action= encrypt|decrypt")
 	customConfig := flag.String("config", "peacemakr.yml", "custom config file e.g. (peacemakr.yml)")
 	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
 	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
+	shouldEncrypt := flag.Bool("encrypt", false, "Should the application encrypt the message")
+	shouldDecrypt := flag.Bool("decrypt", false, "Should the application decrypt the ciphertext")
 	flag.Parse()
-
-	actionStr := canonicalAction(action)
 
 	config := LoadConfigs(*customConfig)
 
+	if config.ApiKey == "" {
+		log.Fatal("Must provide an API key!")
+	}
+
+	if shouldEncrypt == nil && shouldDecrypt == nil {
+		log.Fatal("Must specify either encrypt OR decrypt")
+	}
+
+	if shouldEncrypt != nil && shouldDecrypt != nil && *shouldEncrypt && *shouldDecrypt {
+		log.Fatal("Must not specify both encrypt and decrypt")
+	}
+
 	if config.Verbose {
 		log.Println("Finish parsing flag and config")
-		log.Printf("inputfilename: %s, OutputFilename: %s", *inputFileName, *outputFileName)
+		log.Printf("Input Filename: %s, Output Filename: %s", *inputFileName, *outputFileName)
 	}
 
 	if config.Verbose {
@@ -195,7 +199,9 @@ func main() {
 	}
 
 	if _, err := os.Stat(config.PersisterFileLocation); os.IsNotExist(err) {
-		os.MkdirAll(config.PersisterFileLocation, os.ModePerm)
+		if err := os.MkdirAll(config.PersisterFileLocation, os.ModePerm); err != nil {
+			log.Fatalf("Unable to create persister directory: %v", err)
+		}
 	}
 
 	logger := log.New(os.Stderr, "Peacemakr CLI", log.LstdFlags)
@@ -209,11 +215,9 @@ func main() {
 		GetDiskPersister(config.PersisterFileLocation),
 		logger)
 
-
 	if err != nil {
 		log.Fatalf("Failed to create peacemakr sdk due to %v", err)
 	}
-
 
 	inputFile, err := loadInputFile(*inputFileName)
 	if err != nil {
@@ -230,14 +234,13 @@ func main() {
 
 	registerOrFail(sdk)
 
-	if actionStr == "encrypt" {
-
+	if shouldEncrypt != nil && *shouldEncrypt {
 		if config.Verbose {
 			log.Println("Encrypting")
 		}
 
 		encryptOrFail(sdk, inputFile, outputFile)
-	} else if actionStr == "decrypt" {
+	} else if shouldDecrypt != nil && *shouldDecrypt {
 		if config.Verbose {
 			log.Println("Decrypting")
 		}
