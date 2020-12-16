@@ -3,7 +3,7 @@ FROM peacemakr-cli
 # This is a test api key.
 ENV PEACEMAKR_APIKEY=SQTCdQxcHqLciaWJ2nEQeAEnDb/i6LQjq0RZeqXwcGM=
 
-RUN echo "hello world" | ./peacemakr-cli > test.p
+RUN echo "hello world" | ./peacemakr-cli -encrypt > test.p
 RUN cat test.p | ./peacemakr-cli -decrypt > test.decrypted.p
 RUN cat test.decrypted.p | grep "hello world"
 
