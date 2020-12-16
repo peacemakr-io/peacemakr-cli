@@ -8,7 +8,7 @@ RUN cat test.p | ./peacemakr-cli -decrypt > test.decrypted.p
 RUN cat test.decrypted.p | grep "hello world"
 
 RUN echo "hello world" > input.txt
-RUN ./peacemakr-cli -inputFileName=input.txt -outputFileName=output.txt
+RUN ./peacemakr-cli -encrypt -inputFileName=input.txt -outputFileName=output.txt
 RUN ./peacemakr-cli -decrypt -inputFileName=output.txt -outputFileName=hello.txt
 
 RUN cat hello.txt | grep "hello world"
