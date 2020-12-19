@@ -14,7 +14,7 @@ brew install peacemakr-cli
 
 # seeing it work
 export PEACEMAKR_APIKEY=your-api-key
-echo "hello world" | peacemakr-cli --action=encrypt | peacemakr-cli --action=decrypt
+echo "hello world" | peacemakr-cli -encrypt | peacemakr-cli -decrypt
 # expected output: hello world
 ```
 
@@ -25,7 +25,7 @@ echo "hello world" | peacemakr-cli --action=encrypt | peacemakr-cli --action=dec
 
  (3) Encrypt using `peacemakr-cli` + ApiKey,
 ```sh
-$ ciphertext=`echo "hello world" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -action=encrypt`
+$ ciphertext=`echo "hello world" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -encrypt`
 $ echo $ciphertext
 AQAAAAkAAAAoAAAALAAAADAAAABEAAAAWAAAANcAAADnAAAAMwEAAAAEAAIAAAAAEAAAACEI
 eELxb13s32PdZi/4NuUQAAAAUWJ17eT23DpJ63GdnJlq5XsAAAB7ImNyeXB0b0tleUlEIjoi
@@ -37,7 +37,7 @@ VK2LIDbz40rgi5fdY38C
 ```
 (4) Decrypt using `peacemakr-cli` + ApiKey,
 ```sh
-echo "$ciphertext" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -action=decrypt 2>/dev/null
+echo "$ciphertext" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -decrypt 2>/dev/null
 
 hello world
 ```
@@ -59,14 +59,16 @@ Don't want to use docker? Checkout out our native binary releases for ubuntu.
 ```sh
 $ docker run -i peacemakr/peacemakr-cli ./peacemakr-cli -help
 Usage of ./peacemakr-cli:
-  -action string
-    	action= encrypt|decrypt (default "encrypt")
   -config string
-    	custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")
+        custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")
+  -decrypt
+        Should the application decrypt the ciphertext
+  -encrypt
+        Should the application encrypt the message
   -inputFileName string
-    	inputFile to encrypt/decrypt
+        inputFile to encrypt/decrypt
   -outputFileName string
-    	outputFile to encrypt/decrypt
+        outputFile to encrypt/decrypt
 ```
 
 ## FAQ
