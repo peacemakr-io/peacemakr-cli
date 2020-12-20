@@ -116,6 +116,27 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	}
 }
 
+func validatePeacemakrCiphertext(sdk peacemakr_go_sdk.PeacemakrSDK, from *os.File) {
+	if from == nil {
+		log.Fatalf("missing 'from' in validatepeacemakrciphertext")
+	}
+
+	data, err := ioutil.ReadAll(from)
+	if err != nil {
+		log.Fatalf("failed to read stdin due to error %v", err)
+	}
+
+	isPeacemakrCiphertext := sdk.IsPeacemakrCiphertext(data)
+	if isPeacemakrCiphertext {
+		log.Println("Is a Peacemakr ciphertext")
+		// Exit successfully
+		os.Exit(0)
+	} else {
+		// Exit error
+		log.Fatalf("Is not a Peacemakr ciphertext")
+	}
+}
+
 func registerOrFail(sdk peacemakr_go_sdk.PeacemakrSDK) {
 	err := sdk.Register()
 	if err != nil {
@@ -173,6 +194,9 @@ func main() {
 	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
 	shouldEncrypt := flag.Bool("encrypt", false, "Should the application encrypt the message")
 	shouldDecrypt := flag.Bool("decrypt", false, "Should the application decrypt the ciphertext")
+	shouldValidateCiphertext := flag.Bool("validateispeacemakrciphertext", false, "Should the application "+
+		"validate the ciphertext")
+
 	flag.Parse()
 
 	config := LoadConfigs(*customConfig)
@@ -181,12 +205,12 @@ func main() {
 		log.Fatal("Must provide an API key!")
 	}
 
-	if shouldEncrypt == nil && shouldDecrypt == nil {
-		log.Fatal("Must specify either encrypt OR decrypt")
+	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateCiphertext == nil {
+		log.Fatal("Must specify either encrypt OR decrypt OR validateispeacemakrciphertext")
 	}
 
-	if shouldEncrypt != nil && shouldDecrypt != nil && *shouldEncrypt && *shouldDecrypt {
-		log.Fatal("Must not specify both encrypt and decrypt")
+	if shouldEncrypt != nil && shouldDecrypt != nil && shouldValidateCiphertext != nil && *shouldEncrypt && *shouldDecrypt && *shouldValidateCiphertext {
+		log.Fatal("Must not attempt multiple functions simultaneously")
 	}
 
 	if config.Verbose {
@@ -246,5 +270,11 @@ func main() {
 		}
 
 		decryptOrFail(sdk, inputFile, outputFile)
+	} else if shouldValidateCiphertext != nil && *shouldValidateCiphertext {
+		if config.Verbose {
+			log.Println("Validating the ciphertext is a Peacemakr ciphertext")
+		}
+
+		validatePeacemakrCiphertext(sdk, inputFile)
 	}
 }

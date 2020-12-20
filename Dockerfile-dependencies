@@ -11,5 +11,6 @@ ADD main.go /go/src/github.com/peacemakr/peacemakr-cli/
 # but this should be fixed
 # also should we use 0.0.10? or latest release
 RUN cd src/github.com/peacemakr/peacemakr-cli/ && GO111MODULE=on go mod vendor
-RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.11-0.20201210100352-f5fcbaf18103/pkg/crypto/include /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
-RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.11-0.20201210100352-f5fcbaf18103/pkg/crypto/lib /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
+# binaries from a specific commit are picked up: go get github.com/peacemakr-io/peacemakr-go-sdk@77efbe3bd32f05b738397473ced76dc31bf08c99
+RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.11-0.20201217045855-77efbe3bd32f/pkg/crypto/include /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
+RUN cp -r /go/pkg/mod/github.com/peacemakr-io/peacemakr-go-sdk@v0.0.11-0.20201217045855-77efbe3bd32f/pkg/crypto/lib /go/src/github.com/peacemakr/peacemakr-cli/vendor/github.com/peacemakr-io/peacemakr-go-sdk/pkg/crypto/
