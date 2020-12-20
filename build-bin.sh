@@ -3,7 +3,7 @@
 set -ex
 
 docker build . -f Dockerfile -t peacemakr-cli
-docker build . -f Dockerfile-test -t peacemakr-cli-test
+docker build --no-cache . -f Dockerfile-test -t peacemakr-cli-test
 
 # Release artifacts to aws ecr
 if [ "$1" == "-release" ]; then

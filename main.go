@@ -194,8 +194,8 @@ func main() {
 	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
 	shouldEncrypt := flag.Bool("encrypt", false, "Should the application encrypt the message")
 	shouldDecrypt := flag.Bool("decrypt", false, "Should the application decrypt the ciphertext")
-	shouldValidateCiphertext := flag.Bool("validateispeacemakrciphertext", false, "Should the application "+
-		"validate the ciphertext")
+	shouldValidateCiphertext := flag.Bool("is-peacemakr-ciphertext", false, "Should the application "+
+		"validate whether the ciphertext is a Peacemakr ciphertext or not")
 
 	flag.Parse()
 
@@ -206,7 +206,7 @@ func main() {
 	}
 
 	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateCiphertext == nil {
-		log.Fatal("Must specify either encrypt OR decrypt OR validateispeacemakrciphertext")
+		log.Fatal("Must specify either encrypt OR decrypt OR is-peacemakr-ciphertext")
 	}
 
 	if shouldEncrypt != nil && shouldDecrypt != nil && shouldValidateCiphertext != nil && *shouldEncrypt && *shouldDecrypt && *shouldValidateCiphertext {
