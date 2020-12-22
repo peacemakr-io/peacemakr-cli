@@ -58,7 +58,7 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	return &configuration
 }
 
-func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
+func encryptOrFailCommon(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, from, to *os.File) {
 	if from == nil {
 		log.Fatalf("missing 'from' in encryption")
 	}
@@ -76,7 +76,13 @@ func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 		log.Fatalf("failed to read stdin due to error %v", err)
 	}
 
-	encryptedData, err := sdk.Encrypt(data)
+	var encryptedData []byte
+	if useDomain != "" {
+		encryptedData, err = sdk.EncryptInDomain(data, useDomain)
+	} else {
+		encryptedData, err = sdk.Encrypt(data)
+	}
+
 	if err != nil {
 		log.Fatalf("failed to encrypted due to error %v", err)
 	}
@@ -85,6 +91,17 @@ func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	if err != nil {
 		log.Fatalf("failed to write encrypted data due to error %v", err)
 	}
+}
+
+func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
+	encryptOrFailCommon(sdk, "", from, to)
+}
+
+func encryptOrFailInDomain(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, from, to *os.File) {
+	if useDomain == "" {
+		log.Fatalf("Attemping to encrypt using a specific use domain, yet the use domain was not provided")
+	}
+	encryptOrFailCommon(sdk, useDomain, from, to)
 }
 
 func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
@@ -188,12 +205,23 @@ func loadOutputFile(outputFileName string) (*os.File, error) {
 	return outputFile, nil
 }
 
+func isFlagPassed(name string) bool {
+	found := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			found = true
+		}
+	})
+	return found
+}
+
 func main() {
 	customConfig := flag.String("config", "peacemakr.yml", "custom config file e.g. (peacemakr.yml)")
 	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
 	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
 	shouldEncrypt := flag.Bool("encrypt", false, "Should the application encrypt the message")
 	shouldDecrypt := flag.Bool("decrypt", false, "Should the application decrypt the ciphertext")
+	useDomain := flag.String("domain", "", "A specific use domain to encrypt; `-domain=DOMAIN_NAME`")
 	shouldValidateCiphertext := flag.Bool("is-peacemakr-ciphertext", false, "Should the application "+
 		"validate whether the ciphertext is a Peacemakr ciphertext or not")
 
@@ -211,6 +239,13 @@ func main() {
 
 	if shouldEncrypt != nil && shouldDecrypt != nil && shouldValidateCiphertext != nil && *shouldEncrypt && *shouldDecrypt && *shouldValidateCiphertext {
 		log.Fatal("Must not attempt multiple functions simultaneously")
+	}
+
+	// if encrypting in a specific use domain, ensure the use domain value was set
+	isDomainFlagSet := isFlagPassed("domain")
+	if isDomainFlagSet && useDomain != nil && *useDomain == "" && shouldEncrypt != nil && *shouldEncrypt {
+		log.Fatal("An attempt was made to use a specific use domain to encrypt, yet the use domain name was not provided in " +
+			"cli, consider -domain=DOMAIN_NAME")
 	}
 
 	if config.Verbose {
@@ -262,8 +297,14 @@ func main() {
 		if config.Verbose {
 			log.Println("Encrypting")
 		}
-
-		encryptOrFail(sdk, inputFile, outputFile)
+		if isDomainFlagSet && useDomain != nil && *useDomain != "" {
+			if config.Verbose {
+				log.Println("A use domain has been set to: " + *useDomain)
+			}
+			encryptOrFailInDomain(sdk, *useDomain, inputFile, outputFile)
+		} else {
+			encryptOrFail(sdk, inputFile, outputFile)
+		}
 	} else if shouldDecrypt != nil && *shouldDecrypt {
 		if config.Verbose {
 			log.Println("Decrypting")
