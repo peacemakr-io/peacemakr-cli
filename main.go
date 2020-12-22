@@ -242,8 +242,8 @@ func main() {
 	}
 
 	// if encrypting in a specific use domain, ensure the use domain value was set
-	isDomainFlagSet := isFlagPassed("domain")
-	if isDomainFlagSet && useDomain != nil && *useDomain == "" && shouldEncrypt != nil && *shouldEncrypt {
+	domainFlagIsSet := isFlagPassed("domain")
+	if domainFlagIsSet && useDomain != nil && *useDomain == "" && shouldEncrypt != nil && *shouldEncrypt {
 		log.Fatal("An attempt was made to use a specific use domain to encrypt, yet the use domain name was not provided in " +
 			"cli, consider -domain=DOMAIN_NAME")
 	}
@@ -297,7 +297,7 @@ func main() {
 		if config.Verbose {
 			log.Println("Encrypting")
 		}
-		if isDomainFlagSet && useDomain != nil && *useDomain != "" {
+		if domainFlagIsSet && useDomain != nil && *useDomain != "" {
 			if config.Verbose {
 				log.Println("A use domain has been set to: " + *useDomain)
 			}
