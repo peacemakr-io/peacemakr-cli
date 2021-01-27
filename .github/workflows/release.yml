@@ -130,27 +130,3 @@ jobs:
           asset_path: /tmp/peacemakr-cli-linux.tar.gz/peacemakr-cli-linux.tar.gz
           asset_name: peacemakr-cli-linux.tar.gz
           asset_content_type: application/gzip
-
-  # build_docker:
-  #   name: Build and Release Docker containers
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Get the version
-  #       id: get_version
-  #       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
-  #     - name: Checkout code
-  #       uses: actions/checkout@v1
-
-  #     - name: Publish docker images
-  #       run: |
-  #         docker build -t corecrypto-dependencies:latest . -f docker/go-dependencies.Dockerfile --build-arg="CMAKE_BUILD_TYPE=RELEASE"
-  #         docker tag corecrypto-dependencies:latest docker.pkg.github.com/peacemakr-io/peacemakr-core-crypto/corecrypto-dependencies:${{ steps.get_version.outputs.VERSION }}
-
-  #         docker build -t corecrypto:latest . -f docker/go.Dockerfile
-  #         docker tag corecrypto:latest docker.pkg.github.com/peacemakr-io/peacemakr-core-crypto/corecrypto:${{ steps.get_version.outputs.VERSION }}
-
-  #         docker login docker.pkg.github.com -u peacemakr-io -p ${{ secrets.GITHUB_TOKEN }}
-
-  #         docker push docker.pkg.github.com/peacemakr-io/peacemakr-core-crypto/corecrypto-dependencies:${{ steps.get_version.outputs.VERSION }}
-  #         docker push docker.pkg.github.com/peacemakr-io/peacemakr-core-crypto/corecrypto:${{ steps.get_version.outputs.VERSION }}
