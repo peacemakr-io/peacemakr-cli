@@ -59,18 +59,6 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 }
 
 func encryptOrFailCommon(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, from, to *os.File) {
-	if from == nil {
-		log.Fatalf("missing 'from' in encryption")
-	}
-
-	if to == nil {
-		log.Fatalf("missing 'to' in encryption")
-	}
-
-	if from == to {
-		log.Fatalf("in-place encryption is not supproted (from and to are the same)")
-	}
-
 	data, err := ioutil.ReadAll(from)
 	if err != nil {
 		log.Fatalf("failed to read stdin due to error %v", err)
@@ -104,19 +92,8 @@ func encryptOrFailInDomain(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, 
 	encryptOrFailCommon(sdk, useDomain, from, to)
 }
 
+
 func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
-	if from == nil {
-		log.Fatalf("missing 'from' in decryption")
-	}
-
-	if to == nil {
-		log.Fatalf("missing 'to' in decryption")
-	}
-
-	if from == to {
-		log.Fatalf("in-place decryption is not supproted (from and to are the same)")
-	}
-
 	data, err := ioutil.ReadAll(from)
 	if err != nil {
 		log.Fatalf("failed to read stdin due to error %v", err)
@@ -134,10 +111,6 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 }
 
 func validatePeacemakrCiphertext(sdk peacemakr_go_sdk.PeacemakrSDK, from *os.File) {
-	if from == nil {
-		log.Fatalf("missing 'from' in validatepeacemakrciphertext")
-	}
-
 	data, err := ioutil.ReadAll(from)
 	if err != nil {
 		log.Fatalf("failed to read stdin due to error %v", err)
@@ -155,18 +128,6 @@ func validatePeacemakrCiphertext(sdk peacemakr_go_sdk.PeacemakrSDK, from *os.Fil
 }
 
 func signOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
-	if from == nil {
-		log.Fatalf("missing 'from' in signing")
-	}
-
-	if to == nil {
-		log.Fatalf("missing 'to' in signing")
-	}
-
-	if from == to {
-		log.Fatalf("in-place decryptiosigningn is not supproted (from and to are the same)")
-	}
-
 	data, err := ioutil.ReadAll(from)
 	if err != nil {
 		log.Fatalf("failed to read input due to error %v", err)
@@ -184,18 +145,6 @@ func signOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 }
 
 func verifyOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
-	if from == nil {
-		log.Fatalf("missing 'from' in verifying")
-	}
-
-	if to == nil {
-		log.Fatalf("missing 'to' in verifying")
-	}
-
-	if from == to {
-		log.Fatalf("in-place verifying is not supproted (from and to are the same)")
-	}
-
 	data, err := ioutil.ReadAll(from)
 	if err != nil {
 		log.Fatalf("failed to read input due to error %v", err)
@@ -343,9 +292,22 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error loading input file", err)
 	}
+
+	if inputFile == nil {
+		log.Fatalf("Error input file pointer is null")
+	}
+
 	outputFile, err := loadOutputFile(*outputFileName)
 	if err != nil {
 		log.Fatalf("Error loading output file", err)
+	}
+
+	if outputFile == nil {
+		log.Fatalf("Error output file pointer is null")
+	}
+
+	if inputFile == outputFile {
+		log.Fatalf("Error in-place operation is not supproted (input and output file pointer are the same)")
 	}
 
 	if config.Verbose {
