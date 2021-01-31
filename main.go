@@ -58,17 +58,13 @@ func LoadConfigs(configName string) *PeacemakrConfig {
 	return &configuration
 }
 
-func encryptOrFailCommon(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, from, to *os.File) {
-	data, err := ioutil.ReadAll(from)
-	if err != nil {
-		log.Fatalf("failed to read stdin due to error %v", err)
-	}
-
+func encryptOrFailCommon(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, inputData []byte, to *os.File) {
 	var encryptedData []byte
+	var err error
 	if useDomain != "" {
-		encryptedData, err = sdk.EncryptInDomain(data, useDomain)
+		encryptedData, err = sdk.EncryptInDomain(inputData, useDomain)
 	} else {
-		encryptedData, err = sdk.Encrypt(data)
+		encryptedData, err = sdk.Encrypt(inputData)
 	}
 
 	if err != nil {
@@ -81,25 +77,19 @@ func encryptOrFailCommon(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, fr
 	}
 }
 
-func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
-	encryptOrFailCommon(sdk, "", from, to)
+func encryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, inputData []byte, to *os.File) {
+	encryptOrFailCommon(sdk, "", inputData, to)
 }
 
-func encryptOrFailInDomain(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, from, to *os.File) {
+func encryptOrFailInDomain(sdk peacemakr_go_sdk.PeacemakrSDK, useDomain string, inputData []byte, to *os.File) {
 	if useDomain == "" {
 		log.Fatalf("Attemping to encrypt using a specific use domain, yet the use domain was not provided")
 	}
-	encryptOrFailCommon(sdk, useDomain, from, to)
+	encryptOrFailCommon(sdk, useDomain, inputData, to)
 }
 
-
-func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
-	data, err := ioutil.ReadAll(from)
-	if err != nil {
-		log.Fatalf("failed to read stdin due to error %v", err)
-	}
-
-	decryptedData, err := sdk.Decrypt(data)
+func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, inputData []byte, to *os.File) {
+	decryptedData, err := sdk.Decrypt(inputData)
 	if err != nil {
 		log.Fatalf("failed to decrypt due to error %v", err)
 	}
@@ -110,13 +100,8 @@ func decryptOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	}
 }
 
-func validatePeacemakrCiphertext(sdk peacemakr_go_sdk.PeacemakrSDK, from *os.File) {
-	data, err := ioutil.ReadAll(from)
-	if err != nil {
-		log.Fatalf("failed to read stdin due to error %v", err)
-	}
-
-	isPeacemakrCiphertext := sdk.IsPeacemakrCiphertext(data)
+func validatePeacemakrCiphertext(sdk peacemakr_go_sdk.PeacemakrSDK, inputData []byte) {
+	isPeacemakrCiphertext := sdk.IsPeacemakrCiphertext(inputData)
 	if isPeacemakrCiphertext {
 		log.Println("Is a Peacemakr ciphertext")
 		// Exit successfully
@@ -127,13 +112,8 @@ func validatePeacemakrCiphertext(sdk peacemakr_go_sdk.PeacemakrSDK, from *os.Fil
 	}
 }
 
-func signOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
-	data, err := ioutil.ReadAll(from)
-	if err != nil {
-		log.Fatalf("failed to read input due to error %v", err)
-	}
-
-	signedBlob, err := sdk.SignOnly(data)
+func signOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, inputData []byte, to *os.File) {
+	signedBlob, err := sdk.SignOnly(inputData)
 	if err != nil {
 		log.Fatalf("failed to sign due to error %v", err)
 	}
@@ -144,13 +124,8 @@ func signOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
 	}
 }
 
-func verifyOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
-	data, err := ioutil.ReadAll(from)
-	if err != nil {
-		log.Fatalf("failed to read input due to error %v", err)
-	}
-
-	verifiedMessage, err := sdk.VerifyOnly(data)
+func verifyOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, inputData []byte, to *os.File) {
+	verifiedMessage, err := sdk.VerifyOnly(inputData)
 	if err != nil {
 		log.Fatalf("failed to verify due to error %v", err)
 	}
@@ -247,7 +222,7 @@ func main() {
 	}
 
 	if shouldEncrypt != nil && shouldDecrypt != nil && shouldValidateCiphertext != nil && shouldSign != nil && shouldVerify != nil &&
-	   *shouldEncrypt && *shouldDecrypt && *shouldValidateCiphertext && *shouldSign && *shouldVerify {
+		*shouldEncrypt && *shouldDecrypt && *shouldValidateCiphertext && *shouldSign && *shouldVerify {
 		log.Fatal("Must not attempt multiple functions simultaneously")
 	}
 
@@ -316,6 +291,11 @@ func main() {
 
 	registerOrFail(sdk)
 
+	data, err := ioutil.ReadAll(inputFile)
+	if err != nil {
+		log.Fatalf("failed to read stdin due to error %v", err)
+	}
+
 	if shouldEncrypt != nil && *shouldEncrypt {
 		if config.Verbose {
 			log.Println("Encrypting")
@@ -324,33 +304,33 @@ func main() {
 			if config.Verbose {
 				log.Println("A use domain has been set to: " + *useDomain)
 			}
-			encryptOrFailInDomain(sdk, *useDomain, inputFile, outputFile)
+			encryptOrFailInDomain(sdk, *useDomain, data, outputFile)
 		} else {
-			encryptOrFail(sdk, inputFile, outputFile)
+			encryptOrFail(sdk, data, outputFile)
 		}
 	} else if shouldDecrypt != nil && *shouldDecrypt {
 		if config.Verbose {
 			log.Println("Decrypting")
 		}
 
-		decryptOrFail(sdk, inputFile, outputFile)
+		decryptOrFail(sdk, data, outputFile)
 	} else if shouldValidateCiphertext != nil && *shouldValidateCiphertext {
 		if config.Verbose {
 			log.Println("Validating the ciphertext is a Peacemakr ciphertext")
 		}
 
-		validatePeacemakrCiphertext(sdk, inputFile)
+		validatePeacemakrCiphertext(sdk, data)
 	} else if shouldSign != nil && *shouldSign {
 		if config.Verbose {
 			log.Println("Signing the message")
 		}
 
-		signOrFail(sdk, inputFile, outputFile)
+		signOrFail(sdk, data, outputFile)
 	} else if shouldVerify != nil && *shouldVerify {
 		if config.Verbose {
 			log.Println("Verifying the message")
 		}
 
-		verifyOrFail(sdk, inputFile, outputFile)
+		verifyOrFail(sdk, data, outputFile)
 	}
 }

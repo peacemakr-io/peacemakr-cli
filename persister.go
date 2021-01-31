@@ -65,7 +65,6 @@ func (p *filePersister) Load(key string) (string, error) {
 	return string(b), err
 }
 
-
 func GetDiskPersister(path string) utils.Persister {
 
 	// Create a cache with a default expiration time of 5 minutes, and which
