@@ -50,6 +50,7 @@ jobs:
         run: |
           export ARTIFACT_PATH=`go env GOPATH`/bin/peacemakr-cli
           time echo "hello secure world" | $ARTIFACT_PATH --encrypt | $ARTIFACT_PATH --decrypt
+          time echo "sign and verify world" | $ARTIFACT_PATH --signOnly | $ARTIFACT_PATH --verifyOnly
 
   build_and_test_macos:
     name: Build and Test - MacOS
@@ -78,3 +79,4 @@ jobs:
         run: |
           export ARTIFACT_PATH=`go env GOPATH`/bin/peacemakr-cli
           time echo "hello secure world" | $ARTIFACT_PATH --encrypt | $ARTIFACT_PATH --decrypt
+          time echo "sign and verify world" | $ARTIFACT_PATH --signOnly | $ARTIFACT_PATH --verifyOnly

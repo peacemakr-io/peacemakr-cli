@@ -154,6 +154,64 @@ func validatePeacemakrCiphertext(sdk peacemakr_go_sdk.PeacemakrSDK, from *os.Fil
 	}
 }
 
+func signOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
+	if from == nil {
+		log.Fatalf("missing 'from' in signing")
+	}
+
+	if to == nil {
+		log.Fatalf("missing 'to' in signing")
+	}
+
+	if from == to {
+		log.Fatalf("in-place decryptiosigningn is not supproted (from and to are the same)")
+	}
+
+	data, err := ioutil.ReadAll(from)
+	if err != nil {
+		log.Fatalf("failed to read input due to error %v", err)
+	}
+
+	signedBlob, err := sdk.SignOnly(data)
+	if err != nil {
+		log.Fatalf("failed to sign due to error %v", err)
+	}
+
+	_, err = to.Write(signedBlob)
+	if err != nil {
+		log.Fatalf("failed to write signedBlob due to error %v", err)
+	}
+}
+
+func verifyOrFail(sdk peacemakr_go_sdk.PeacemakrSDK, from, to *os.File) {
+	if from == nil {
+		log.Fatalf("missing 'from' in verifying")
+	}
+
+	if to == nil {
+		log.Fatalf("missing 'to' in verifying")
+	}
+
+	if from == to {
+		log.Fatalf("in-place verifying is not supproted (from and to are the same)")
+	}
+
+	data, err := ioutil.ReadAll(from)
+	if err != nil {
+		log.Fatalf("failed to read input due to error %v", err)
+	}
+
+	verifiedMessage, err := sdk.VerifyOnly(data)
+	if err != nil {
+		log.Fatalf("failed to verify due to error %v", err)
+	}
+
+	_, err = to.Write(verifiedMessage)
+	if err != nil {
+		log.Fatalf("failed to write verifiedMessage due to error %v", err)
+	}
+}
+
 func registerOrFail(sdk peacemakr_go_sdk.PeacemakrSDK) {
 	err := sdk.Register()
 	if err != nil {
@@ -221,6 +279,8 @@ func main() {
 	outputFileName := flag.String("outputFileName", "", "outputFile to encrypt/decrypt")
 	shouldEncrypt := flag.Bool("encrypt", false, "Should the application encrypt the message")
 	shouldDecrypt := flag.Bool("decrypt", false, "Should the application decrypt the ciphertext")
+	shouldSign := flag.Bool("signOnly", false, "Should the application sign the message")
+	shouldVerify := flag.Bool("verifyOnly", false, "Should the application verify the input blob")
 	useDomain := flag.String("domain", "", "A specific use domain to encrypt; `-domain=DOMAIN_NAME`")
 	shouldValidateCiphertext := flag.Bool("is-peacemakr-ciphertext", false, "Should the application "+
 		"validate whether the ciphertext is a Peacemakr ciphertext or not")
@@ -233,11 +293,12 @@ func main() {
 		log.Fatal("Must provide an API key!")
 	}
 
-	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateCiphertext == nil {
+	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateCiphertext == nil && shouldSign == nil && shouldVerify == nil {
 		log.Fatal("Must specify either encrypt OR decrypt OR is-peacemakr-ciphertext")
 	}
 
-	if shouldEncrypt != nil && shouldDecrypt != nil && shouldValidateCiphertext != nil && *shouldEncrypt && *shouldDecrypt && *shouldValidateCiphertext {
+	if shouldEncrypt != nil && shouldDecrypt != nil && shouldValidateCiphertext != nil && shouldSign != nil && shouldVerify != nil &&
+	   *shouldEncrypt && *shouldDecrypt && *shouldValidateCiphertext && *shouldSign && *shouldVerify {
 		log.Fatal("Must not attempt multiple functions simultaneously")
 	}
 
@@ -317,5 +378,17 @@ func main() {
 		}
 
 		validatePeacemakrCiphertext(sdk, inputFile)
+	} else if shouldSign != nil && *shouldSign {
+		if config.Verbose {
+			log.Println("Signing the message")
+		}
+
+		signOrFail(sdk, inputFile, outputFile)
+	} else if shouldVerify != nil && *shouldVerify {
+		if config.Verbose {
+			log.Println("Verifying the message")
+		}
+
+		verifyOrFail(sdk, inputFile, outputFile)
 	}
 }
