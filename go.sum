@@ -164,10 +164,6 @@ github.com/patrickmn/go-cache v1.0.0 h1:3gD5McaYs9CxjyK5AXGcq8gdeCARtd/9gJDUvVea
 github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
 github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
 github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtPdI/k=
-github.com/peacemakr-io/peacemakr-go-sdk v0.0.11 h1:6Zfwax90cKy4rY+ujS7wOitDRov3EmFhKAe/aKKuIBM=
-github.com/peacemakr-io/peacemakr-go-sdk v0.0.11/go.mod h1:IqKgW4oGSz/fFqmBOeeSI+uLLD2IR1piMPV+Uzrm29I=
-github.com/peacemakr-io/peacemakr-go-sdk v0.0.12 h1:+2F31+jwFuS60bt3B6U1EAb9w06kty3qA+r1eZp1II0=
-github.com/peacemakr-io/peacemakr-go-sdk v0.0.12/go.mod h1:IqKgW4oGSz/fFqmBOeeSI+uLLD2IR1piMPV+Uzrm29I=
 github.com/peacemakr-io/peacemakr-go-sdk v0.1.0 h1:3dehWSr3y9VNqB43NhNN9X1bmUq6r+PkWMLfsvVpZt4=
 github.com/peacemakr-io/peacemakr-go-sdk v0.1.0/go.mod h1:QRCwmld+koe5xyZzmeLUD+wkGDV0FbwuJXjPaRwW6lU=
 github.com/pelletier/go-toml v1.2.0 h1:T5zMGML61Wp+FlcbWjRDT7yAxhJNAiPPLOFECq181zc=
