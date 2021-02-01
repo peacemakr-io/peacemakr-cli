@@ -292,8 +292,8 @@ func main() {
 	shouldSign := flag.Bool("signOnly", false, "Should the application sign the message")
 	shouldVerify := flag.Bool("verifyOnly", false, "Should the application verify the input blob")
 	useDomain := flag.String("domain", "", "A specific use domain to encrypt; `-domain=DOMAIN_NAME`")
-	shouldValidateCiphertext := flag.Bool("is-peacemakr-ciphertext", false, "Should the application "+
-		"validate whether the ciphertext is a Peacemakr ciphertext or not")
+	shouldValidateBlob := flag.Bool("is-peacemakr-blob", false, "Should the application "+
+		"validate whether the blob is a Peacemakr blob or not")
 
 	flag.Parse()
 
@@ -303,11 +303,11 @@ func main() {
 		log.Fatal("Must provide an API key!")
 	}
 
-	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateCiphertext == nil && shouldSign == nil && shouldVerify == nil {
-		log.Fatal("Must specify either encrypt, decrypt, is-peacemakr-ciphertext, signOnly, or verifyOnly")
+	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateBlob == nil && shouldSign == nil && shouldVerify == nil {
+		log.Fatal("Must specify either encrypt, decrypt, is-peacemakr-blob, signOnly, or verifyOnly")
 	}
 
-	if num := numOfActionFlags(shouldEncrypt, shouldDecrypt, shouldValidateCiphertext, shouldSign, shouldVerify); !(num == 1) {
+	if num := numOfActionFlags(shouldEncrypt, shouldDecrypt, shouldValidateBlob, shouldSign, shouldVerify); !(num == 1) {
 		log.Fatal("Must not attempt multiple functions simultaneously")
 	}
 
@@ -381,7 +381,7 @@ func main() {
 		}
 
 		decryptOrFail(sdk, inputFile, outputFile)
-	} else if shouldValidateCiphertext != nil && *shouldValidateCiphertext {
+	} else if shouldValidateBlob != nil && *shouldValidateBlob {
 		if config.Verbose {
 			log.Println("Validating the ciphertext is a Peacemakr ciphertext")
 		}
