@@ -282,7 +282,7 @@ func main() {
 	shouldSign := flag.Bool("signOnly", false, "Should the application sign the message")
 	shouldVerify := flag.Bool("verifyOnly", false, "Should the application verify the input blob")
 	useDomain := flag.String("domain", "", "A specific use domain to encrypt; `-domain=DOMAIN_NAME`")
-	shouldValidateCiphertext := flag.Bool("is-peacemakr-blob", false, "Should the application "+
+	shouldValidateCiphertext := flag.Bool("is-peacemakr-ciphertext", false, "Should the application "+
 		"validate whether the ciphertext is a Peacemakr ciphertext or not")
 
 	flag.Parse()
@@ -293,8 +293,9 @@ func main() {
 		log.Fatal("Must provide an API key!")
 	}
 
-	if flag.NFlag() == 0 {
-		log.Fatal("Must specify either encrypt, decrypt, is-peacemakr-blob, signOnly, or verifyOnly")
+
+	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateCiphertext == nil && shouldSign == nil && shouldVerify == nil {
+		log.Fatal("Must specify either encrypt, decrypt, is-peacemakr-ciphertext, signOnly, or verifyOnly")
 	}
 
 	// if encrypting in a specific use domain, ensure the use domain value was set
