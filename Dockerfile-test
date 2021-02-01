@@ -4,13 +4,21 @@ FROM peacemakr-cli
 ENV PEACEMAKR_APIKEY=SQTCdQxcHqLciaWJ2nEQeAEnDb/i6LQjq0RZeqXwcGM=
 
 RUN echo "hello world" | ./peacemakr-cli -encrypt > test.p
-RUN cat test.p | ./peacemakr-cli -is-peacemakr-ciphertext
+RUN cat test.p | ./peacemakr-cli -is-peacemakr-blob
 RUN cat test.p | ./peacemakr-cli -decrypt > test.decrypted.p
 RUN cat test.decrypted.p | grep "hello world"
 
+RUN echo "sign verify world" | ./peacemakr-cli -signOnly > signed.p
+RUN cat signed.p | ./peacemakr-cli -verifyOnly > verified.p
+RUN cat verified.p | grep "sign verify world"
+
 RUN echo "hello world" > input.txt
 RUN ./peacemakr-cli -encrypt -inputFileName=input.txt -outputFileName=output.txt
-RUN ./peacemakr-cli -is-peacemakr-ciphertext -inputFileName=output.txt
+RUN ./peacemakr-cli -is-peacemakr-blob -inputFileName=output.txt
 RUN ./peacemakr-cli -decrypt -inputFileName=output.txt -outputFileName=hello.txt
-
 RUN cat hello.txt | grep "hello world"
+
+RUN echo "sign verify world" > signing_input.txt
+RUN ./peacemakr-cli -signOnly -inputFileName=signing_input.txt -outputFileName=signing_output.txt
+RUN ./peacemakr-cli -verifyOnly -inputFileName=signing_output.txt -outputFileName=verified.txt
+RUN cat verified.txt | grep "sign verify world"
