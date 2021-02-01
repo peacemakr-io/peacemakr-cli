@@ -273,6 +273,16 @@ func isFlagPassed(name string) bool {
 	return found
 }
 
+func numOfActionFlags(flags ...*bool) int {
+	sum := 0
+	for _, v := range flags {
+		if *v {
+			sum += 1
+		}
+	}
+	return sum
+}
+
 func main() {
 	customConfig := flag.String("config", "peacemakr.yml", "custom config file e.g. (peacemakr.yml)")
 	inputFileName := flag.String("inputFileName", "", "inputFile to encrypt/decrypt")
@@ -293,9 +303,12 @@ func main() {
 		log.Fatal("Must provide an API key!")
 	}
 
-
 	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateCiphertext == nil && shouldSign == nil && shouldVerify == nil {
 		log.Fatal("Must specify either encrypt, decrypt, is-peacemakr-ciphertext, signOnly, or verifyOnly")
+	}
+
+	if num := numOfActionFlags(shouldEncrypt, shouldDecrypt, shouldValidateCiphertext, shouldSign, shouldVerify); !(num == 1) {
+		log.Fatal("Must not attempt multiple functions simultaneously")
 	}
 
 	// if encrypting in a specific use domain, ensure the use domain value was set
