@@ -20,7 +20,7 @@ echo "hello world" | peacemakr-cli -encrypt | peacemakr-cli -decrypt
 
 ## Quick start with Dockerhub
  (1) Register an account with https://peacemakr.io
- 
+
  (2) Login to your admin portal, https://admin.peacemakr.io - grab your ApiKey
 
  (3) Encrypt using `peacemakr-cli` + ApiKey,
@@ -45,14 +45,37 @@ hello world
 
 Don't want to use docker? Checkout out our native binary releases for ubuntu.
  * https://github.com/peacemakr-io/peacemakr-cli/releases
- 
+
 ### Examples in action:
- * [How to encrypt server logs with logrotate and peacemakr-cli](https://medium.com/@danielhuang37/encrypting-all-your-logs-in-2-easy-steps-using-logrotate-and-peacemakr-8ad9cbfe1b4c) 
+ * [How to encrypt server logs with logrotate and peacemakr-cli](https://medium.com/@danielhuang37/encrypting-all-your-logs-in-2-easy-steps-using-logrotate-and-peacemakr-8ad9cbfe1b4c)
 
 ## Build from source with docker
 ```sh
-./build-dep.sh 
+./build-dep.sh
 ./build-bin.sh
+```
+
+## Setup for Ubuntu
+```sh
+// get peacemakr cli
+curl -LJO https://github.com/peacemakr-io/peacemakr-cli/releases/download/v0.3.0/peacemakr-cli-linux.tar.gz
+tar -xf peacemakr-cli-linux.tar.gz
+// install dependencies
+sudo apt-get install musl musl-dev
+ln -s /usr/lib/x86_64-linux-musl/libc.so /usr/lib/libc.musl-x86_64.so.1
+
+// get corecrypt, move it to /usr/lib
+curl -LJO https://github.com/peacemakr-io/peacemakr-core-crypto/releases/download/v0.2.2/peacemakr-core-crypto-ubuntu-x86_64.tar.gz
+tar -xf peacemakr-core-crypto-ubuntu-x86_64.tar.gz
+// move lib/*.so to /usr/lib/
+cp -r lib/* /usr/lib/
+// move include/* to /usr/include
+cp -r include/* /usr/include/
+
+wget https://raw.githubusercontent.com/peacemakr-io/peacemakr-cli/master/peacemakr.yml
+
+export PEACEMAKR_APIKEY=*****client-api-key*****
+time echo "hello secure world" | ./peacemakr-cli --encrypt
 ```
 
 ## What flags does it accept?
