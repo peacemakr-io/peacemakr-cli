@@ -60,17 +60,23 @@ Don't want to use docker? Checkout out our native binary releases for ubuntu.
 $ docker run -i peacemakr/peacemakr-cli ./peacemakr-cli -help
 Usage of ./peacemakr-cli:
   -config string
-    	custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")
+        custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")
   -decrypt
-    	Should the application decrypt the ciphertext
+        Should the application decrypt the ciphertext
+  -domain -domain=DOMAIN_NAME
+        A specific use domain to encrypt; -domain=DOMAIN_NAME
   -encrypt
-    	Should the application encrypt the message
+        Should the application encrypt the message
   -inputFileName string
-    	inputFile to encrypt/decrypt
-  -is-peacemakr-ciphertext
-    	Should the application validate whether the ciphertext is a Peacemakr ciphertext or not
+        inputFile to encrypt/decrypt
+  -is-peacemakr-blob
+        Should the application validate whether the blob is a Peacemakr blob or not
   -outputFileName string
-    	outputFile to encrypt/decrypt
+        outputFile to encrypt/decrypt
+  -signOnly
+        Should the application sign the message
+  -verifyOnly
+        Should the application verify the input blob
 ```
 
 ## FAQ

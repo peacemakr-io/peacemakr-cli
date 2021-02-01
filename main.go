@@ -303,7 +303,7 @@ func main() {
 		log.Fatal("Must provide an API key!")
 	}
 
-	if shouldEncrypt == nil && shouldDecrypt == nil && shouldValidateBlob == nil && shouldSign == nil && shouldVerify == nil {
+	if num := numOfActionFlags(shouldEncrypt, shouldDecrypt, shouldValidateBlob, shouldSign, shouldVerify); (num == 0) {
 		log.Fatal("Must specify either encrypt, decrypt, is-peacemakr-blob, signOnly, or verifyOnly")
 	}
 
