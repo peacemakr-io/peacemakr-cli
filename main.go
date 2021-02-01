@@ -296,9 +296,6 @@ func main() {
 	if flag.NFlag() == 0 {
 		log.Fatal("Must specify either encrypt, decrypt, is-peacemakr-blob, signOnly, or verifyOnly")
 	}
-	if flag.NFlag() > 1 {
-		log.Fatalf("Must not attempt multiple functions simultaneously")
-	}
 
 	// if encrypting in a specific use domain, ensure the use domain value was set
 	domainFlagIsSet := isFlagPassed("domain")
