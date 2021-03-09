@@ -34,8 +34,8 @@ jobs:
           go mod vendor
           go install
           export ARTIFACT_PATH=`go env GOPATH`/bin/peacemakr-cli
-          cp $ARTIFACT_PATH ./peacemakr-cli
-          tar -pczf peacemakr-cli-linux.tar.gz peacemakr-cli
+          cp $ARTIFACT_PATH ./peacemakr
+          tar -pczf peacemakr-cli-linux.tar.gz peacemakr
 
       - name: Upload Release Asset
         id: upload-release-asset
@@ -67,8 +67,8 @@ jobs:
           go mod vendor
           go install
           export ARTIFACT_PATH=`go env GOPATH`/bin/peacemakr-cli
-          cp $ARTIFACT_PATH ./peacemakr-cli
-          tar -pczf peacemakr-cli-Darwin_amd64.tar.gz peacemakr-cli
+          cp $ARTIFACT_PATH ./peacemakr
+          tar -pczf peacemakr-Darwin_amd64.tar.gz peacemakr
 
       - name: Upload Release Asset
         id: upload-release-asset
