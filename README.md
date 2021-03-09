@@ -75,7 +75,7 @@ cp -r include/* /usr/include/
 wget https://raw.githubusercontent.com/peacemakr-io/peacemakr-cli/master/peacemakr.yml
 
 export PEACEMAKR_APIKEY=*****client-api-key*****
-time echo "hello secure world" | ./peacemakr-cli --encrypt
+echo "hello secure world" | ./peacemakr-cli --encrypt
 ```
 
 ## What flags does it accept?
