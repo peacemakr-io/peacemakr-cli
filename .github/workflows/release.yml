@@ -35,7 +35,7 @@ jobs:
           go install
           export ARTIFACT_PATH=`go env GOPATH`/bin/peacemakr-cli
           cp $ARTIFACT_PATH ./peacemakr
-          tar -pczf peacemakr-cli-linux.tar.gz peacemakr
+          tar -pczf peacemakr-linux.tar.gz peacemakr
 
       - name: Upload Release Asset
         id: upload-release-asset
@@ -43,8 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: ./peacemakr-cli-linux.tar.gz
-          name: peacemakr-cli-linux.tar.gz
+          path: ./peacemakr-linux.tar.gz
+          name: peacemakr-linux.tar.gz
 
   build_macos:
     name: Build Release Asset - macOS
@@ -76,8 +76,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: ./peacemakr-cli-Darwin_amd64.tar.gz
-          name: peacemakr-cli-Darwin_amd64.tar.gz
+          path: ./peacemakr-Darwin_amd64.tar.gz
+          name: peacemakr-Darwin_amd64.tar.gz
 
   upload_release:
     name: Create and Upload Release
@@ -91,14 +91,14 @@ jobs:
       - name: Download macOS
         uses: actions/download-artifact@v1
         with:
-          name: peacemakr-cli-Darwin_amd64.tar.gz
-          path: /tmp/peacemakr-cli-Darwin_amd64.tar.gz
+          name: peacemakr-Darwin_amd64.tar.gz
+          path: /tmp/peacemakr-Darwin_amd64.tar.gz
 
       - name: Download Ubuntu
         uses: actions/download-artifact@v1
         with:
-          name: peacemakr-cli-linux.tar.gz
-          path: /tmp/peacemakr-cli-linux.tar.gz
+          name: peacemakr-linux.tar.gz
+          path: /tmp/peacemakr-linux.tar.gz
 
       - name: Create Release
         id: create_release
@@ -117,8 +117,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/peacemakr-cli-Darwin_amd64.tar.gz/peacemakr-cli-Darwin_amd64.tar.gz
-          asset_name: peacemakr-cli-Darwin_amd64.tar.gz
+          asset_path: /tmp/peacemakr-Darwin_amd64.tar.gz/peacemakr-Darwin_amd64.tar.gz
+          asset_name: peacemakr-Darwin_amd64.tar.gz
           asset_content_type: application/gzip
 
       - name: Upload Release Asset - Ubuntu
@@ -127,6 +127,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/peacemakr-cli-linux.tar.gz/peacemakr-cli-linux.tar.gz
-          asset_name: peacemakr-cli-linux.tar.gz
+          asset_path: /tmp/peacemakr-linux.tar.gz/peacemakr-linux.tar.gz
+          asset_name: peacemakr-linux.tar.gz
           asset_content_type: application/gzip
