@@ -10,7 +10,7 @@ CLI that may be used to interact with anything protected by Peacemakr's Secure D
 ## How to Install
 ```sh
 brew tap peacemakr-io/peacemakr
-brew install peacemakr-cli
+brew install peacemakr
 
 # seeing it work
 export PEACEMAKR_APIKEY=your-api-key
@@ -21,9 +21,9 @@ echo "hello world" | peacemakr-cli -encrypt | peacemakr-cli -decrypt
 ## Quick start with Dockerhub
  (1) Register an account with https://peacemakr.io
 
- (2) Login to your admin portal, https://admin.peacemakr.io - grab your ApiKey
+ (2) Login to your admin portal, https://admin.peacemakr.io - grab your API Key
 
- (3) Encrypt using `peacemakr-cli` + ApiKey,
+ (3) Encrypt using `peacemakr` + ApiKey,
 ```sh
 $ ciphertext=`echo "hello world" | docker run -e PEACEMAKR_APIKEY=your-api-key -i peacemakr/peacemakr-cli ./peacemakr-cli -encrypt`
 $ echo $ciphertext
@@ -80,7 +80,7 @@ echo "hello secure world" | ./peacemakr-cli --encrypt
 
 ## What flags does it accept?
 ```sh
-$ docker run -i peacemakr/peacemakr-cli ./peacemakr-cli -help
+$ docker run -i peacemakr/peacemakr-cli ./peacemakr -help
 Usage of ./peacemakr-cli:
   -config string
         custom config file e.g. (peacemakr.yml) (default "peacemakr.yml")

@@ -400,4 +400,10 @@ func main() {
 
 		verifyOrFail(sdk, inputFile, outputFile)
 	}
+
+	// OMG this is driving me crazy. Let's just print out a new line.
+	if (outputFile == os.Stdout) {
+		os.Stdout.WriteString("\n")
+	}
+
 }
