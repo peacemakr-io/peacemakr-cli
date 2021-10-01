@@ -110,6 +110,19 @@ Usage of ./peacemakr-cli:
         Should the application verify the input blob
 ```
 
+## Contributing
+We appreciate all contributions. Some basic guidelines are here, for more informaton
+see CONTRIBUTING.md
+
+Issues:
+- Please include a minimal example that reproduces your issue
+- Please use the tags to help us help you
+- If you file an issue and you want to work on it, fantastic! Please assign it to yourself.
+
+PRs:
+- All PRs must be reviewed and pass CI
+- New functionality must include new tests
+
 ## FAQ
 
  * `failed to register due to unknown error (status 500)` - verify correctness of your API key
